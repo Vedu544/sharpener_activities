@@ -2,20 +2,27 @@ import dotenv from "dotenv";
 dotenv.config({ path: "./.env" }); // MUST be first
 
 import { app } from "./app.js";
-import pgPool from "./config/db.js";
+import sequelize from "./config/db.js";
 
 const PORT = process.env.PORT || 8000;
 
-pgPool
-  .query("SELECT NOW()")
-  .then(() => {
-    console.log("Database connected successfully");
-    console.log("JWT_SECRET:", process.env.JWT_SECRET); // DEBUG (temporary)
+(async () => {
+  try {
+    // Test DB connection
+    await sequelize.authenticate();
+    console.log("✅ Database connected successfully");
 
+    // Create/update tables in RDS based on your models
+    // Use sync() because your RDS DB is empty
+    await sequelize.sync(); // or sequelize.sync({ alter: true }) if you change models often
+    console.log("✅ All models synchronized with the database");
+
+    // Start server
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`🚀 Server running on PORT ${PORT}`);
     });
-  })
-  .catch((err) => {
-    console.error("Database connection failed:", err.message);
-  });
+  } catch (err) {
+    console.error("❌ Database init failed:", err);
+    process.exit(1);
+  }
+})();

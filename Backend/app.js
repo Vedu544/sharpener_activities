@@ -10,23 +10,41 @@ import passwordRoutes from "./routes/password.routes.js";
 
 const app = express();
 
-// test route (VERY IMPORTANT)
+// Health check route
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "OK", message: "Server is healthy" });
 });
 
-// middlewares
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || "*",
-  credentials: true,
-}));
+// CORS setup
+const allowedOrigins = [
+  "http://localhost:5173",          // local dev
+  process.env.FRONTEND_URL,         // S3 static website URL from .env
+].filter(Boolean);                  // remove undefined / empty values
+
+console.log("CORS allowed origins:", allowedOrigins);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow non-browser clients (Postman, curl) with no Origin header
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.log("Blocked by CORS:", origin);
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
 
 app.use(express.json({ limit: "50kb" }));
 app.use(express.urlencoded({ extended: true, limit: "50kb" }));
 app.use(cookieParser());
 
-
-// routes
+// Routes
 app.use("/auth", authRoutes);
 app.use("/expenses", expenseRoutes);
 app.use("/premium", premiumRoutes);

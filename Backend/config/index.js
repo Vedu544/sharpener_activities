@@ -1,4 +1,4 @@
-import sequelize from "../config/sequelize.js";
+import sequelize from "./sequelize.js";
 
 // Models
 import User from "../models/user.model.js"
