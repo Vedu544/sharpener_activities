@@ -10,14 +10,21 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: "postgres",
-    port: process.env.DB_PORT,
-    logging: false, // true only in dev
+    port: process.env.DB_PORT || 5432,
+    logging: false,
     pool: {
       max: 10,
       min: 0,
       acquire: 30000,
       idle: 10000,
     },
+    // ADD THIS FOR AWS RDS
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    }
   }
 );
 
