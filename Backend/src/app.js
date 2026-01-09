@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import authRoutes from "../src/routes/auth.routes.js"
+import roomRoutes from "../src/routes/room.routes.js"
+import messageRoutes from "../src/routes/message.routes.js"
 
 const app = express();
 
@@ -18,8 +20,8 @@ app.get("/health", (req, res) => {
 
 /* ---------- ROUTES (will add later) ---------- */
 app.use("/auth", authRoutes);
-// app.use("/messages", messageRoutes);
-// app.use("/rooms", roomRoutes);
+app.use("/messages", messageRoutes);
+app.use("/rooms", roomRoutes);
 
 /* ---------- GLOBAL ERROR HANDLER ---------- */
 app.use((err, req, res, next) => {
