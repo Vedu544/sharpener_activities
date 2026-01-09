@@ -4,9 +4,12 @@ import {usePremium} from "../../hooks/usePremium"
 import Navbar from "../../components/layout/Navbar";
 import Loader from "../../components/ui/Loader";
 import { showError } from "../../utils/toast";
+import useAuth from "../../hooks/useAuth";
 
 const Leaderboard = () => {
-  const { isPremium } = usePremium();
+  const { user } = useAuth();
+  const isPremium = user?.isPremium;
+
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
