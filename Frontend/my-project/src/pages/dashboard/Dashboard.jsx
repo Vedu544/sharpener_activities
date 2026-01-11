@@ -9,7 +9,7 @@ import Navbar from "../../components/layout/Navbar";
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const { expenses, loading, addExpense, deleteExpense } = useExpense();
+ const { expenses, loading, createExpense, removeExpense } = useExpense();
   const { upgradeToPremium } = usePremium();
 
   const isPremium = user?.isPremium;
@@ -38,7 +38,7 @@ const Dashboard = () => {
         </div>
 
         {/* Add Expense */}
-        <ExpenseForm onAdd={addExpense} />
+        <ExpenseForm onAdd={createExpense} />
 
         {/* Expenses */}
         {loading ? (
@@ -46,7 +46,7 @@ const Dashboard = () => {
         ) : (
           <ExpenseList
             expenses={expenses}
-            onDelete={deleteExpense}
+            onDelete={removeExpense}
           />
         )}
       </div>

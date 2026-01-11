@@ -93,3 +93,97 @@ export const deleteExpense = async (req, res, next) => {
     next(error);
   }
 };
+
+// Add this function to your expense controller
+
+export const updateExpense = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.userId;
+    const { amount, description, category, note } = req.body;
+
+    // Validate required fields
+    if (!amount || !description || !category) {
+      return res.status(400).json({ 
+        message: "Amount, description, and category are required" 
+      });
+    }
+
+    // Find the expense and verify ownership
+    const expense = await Expense.findOne({
+      where: { 
+        id, 
+        userId 
+      }
+    });
+
+    if (!expense) {
+      return res.status(404).json({ 
+        message: "Expense not found or you don't have permission to update it" 
+      });
+    }
+
+    // Check for duplicate (excluding current expense)
+    const duplicate = await Expense.findOne({
+      where: {
+        userId,
+        amount,
+        description,
+        category,
+        id: { [Op.ne]: id }, // Exclude current expense
+        createdAt: {
+          [Op.gte]: new Date(Date.now() - 10000),
+        },
+      },
+    });
+
+    if (duplicate) {
+      return res.status(409).json({
+        message: "Similar expense already exists",
+      });
+    }
+
+    // Update the expense
+    await expense.update({
+      amount,
+      description,
+      category,
+      note: note || expense.note, // Keep existing note if not provided
+    });
+
+    return res.status(200).json({
+      message: "Expense updated successfully",
+      expense,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Optional: Add a getExpenseById function for fetching single expense details
+export const getExpenseById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.userId;
+
+    const expense = await Expense.findOne({
+      where: { 
+        id, 
+        userId 
+      }
+    });
+
+    if (!expense) {
+      return res.status(404).json({ 
+        message: "Expense not found" 
+      });
+    }
+
+    return res.status(200).json({
+      expense,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
