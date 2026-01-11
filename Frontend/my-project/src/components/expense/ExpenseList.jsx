@@ -1,15 +1,20 @@
 import { useState, useMemo } from "react";
-import axios from "../../api/axios";
 import { showSuccess, showError } from "../../utils/toast";
 import useAuth from "../../hooks/useAuth";
 
 const ITEMS_PER_PAGE = 7;
 
-const ExpenseList = ({ expenses, onRefresh, onDelete }) => {
+const ExpenseList = ({ expenses, onRefresh, onDelete, onUpdate }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({
+    description: "",
+    category: "",
+    amount: "",
+  });
   const { user } = useAuth();
   const isPremium = user?.isPremium;
 
@@ -71,6 +76,51 @@ const ExpenseList = ({ expenses, onRefresh, onDelete }) => {
     setCurrentPage(1);
   }, [searchTerm, categoryFilter, sortBy]);
 
+  // Start editing an expense
+  const handleEditClick = (expense) => {
+    setEditingId(expense.id);
+    setEditForm({
+      description: expense.description,
+      category: expense.category,
+      amount: expense.amount.toString(),
+    });
+  };
+
+  // Cancel editing
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditForm({ description: "", category: "", amount: "" });
+  };
+
+  // Save updated expense
+  const handleSaveEdit = async (id) => {
+    try {
+      // Validate
+      if (!editForm.description.trim() || !editForm.category.trim() || !editForm.amount) {
+        showError("All fields are required");
+        return;
+      }
+
+      const amount = parseFloat(editForm.amount);
+      if (isNaN(amount) || amount <= 0) {
+        showError("Please enter a valid amount");
+        return;
+      }
+
+      if (onUpdate) {
+        await onUpdate(id, {
+          description: editForm.description.trim(),
+          category: editForm.category.trim(),
+          amount: amount,
+        });
+        setEditingId(null);
+        setEditForm({ description: "", category: "", amount: "" });
+      }
+    } catch (err) {
+      showError("Failed to update expense");
+    }
+  };
+
   const handleDelete = async (id) => {
     try {
       if (onDelete) {
@@ -92,7 +142,6 @@ const ExpenseList = ({ expenses, onRefresh, onDelete }) => {
     searchTerm || categoryFilter !== "all" || sortBy !== "newest";
 
   // Download expense report as CSV
-  // Download expense report as CSV - FIXED VERSION
   const downloadExpenseReport = () => {
     if (!isPremium) {
       showError("This feature is only available for premium users");
@@ -111,7 +160,6 @@ const ExpenseList = ({ expenses, onRefresh, onDelete }) => {
     );
 
     // Create CSV content with proper formatting
-    // Using BOM for proper UTF-8 encoding in Excel
     let csvContent = "\uFEFF"; // BOM for Excel to recognize UTF-8
 
     // Title
@@ -127,17 +175,15 @@ const ExpenseList = ({ expenses, onRefresh, onDelete }) => {
     // Table headers
     csvContent += "S.No.,Date,Description,Category,Amount (Rs.)\n";
 
-    // Table rows - Amount without commas to avoid CSV issues
+    // Table rows
     sortedExpenses.forEach((expense, index) => {
       const date = new Date(expense.createdAt).toLocaleDateString("en-IN", {
         day: "2-digit",
         month: "short",
         year: "numeric",
       });
-      // Wrap description in quotes and escape any existing quotes
       const description = `"${(expense.description || "N/A").replace(/"/g, '""')}"`;
       const category = `"${(expense.category || "N/A").replace(/"/g, '""')}"`;
-      // Keep amount as plain number without commas or symbols
       const amount = Number(expense.amount);
 
       csvContent += `${index + 1},${date},${description},${category},${amount}\n`;
@@ -165,7 +211,7 @@ const ExpenseList = ({ expenses, onRefresh, onDelete }) => {
     showSuccess("Expense report downloaded successfully!");
   };
 
-  // Download as formatted text file (alternative option)
+  // Download as formatted text file
   const downloadExpenseReportTxt = () => {
     if (!isPremium) {
       showError("This feature is only available for premium users");
@@ -481,7 +527,7 @@ const ExpenseList = ({ expenses, onRefresh, onDelete }) => {
                       Date
                     </th>
                     <th className="p-3 text-center font-semibold text-gray-700">
-                      Action
+                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -489,41 +535,122 @@ const ExpenseList = ({ expenses, onRefresh, onDelete }) => {
                   {currentExpenses.map((expense, index) => (
                     <tr
                       key={expense.id}
-                      className={`border-b hover:bg-blue-50 transition-colors ${index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
-                        }`}
+                      className={`border-b hover:bg-blue-50 transition-colors ${
+                        index % 2 === 0 ? "bg-white" : "bg-gray-50/50"
+                      }`}
                     >
-                      <td className="p-3 font-medium text-gray-800">
-                        {expense.description}
-                      </td>
-                      <td className="p-3 text-center">
-                        <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-                          {expense.category}
-                        </span>
-                      </td>
-                      <td className="p-3 text-center font-semibold text-green-600">
-                        ₹{Number(expense.amount).toLocaleString("en-IN")}
-                      </td>
-                      <td className="p-3 text-center text-gray-500">
-                        {new Date(expense.createdAt).toLocaleDateString(
-                          "en-IN",
-                          {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                          }
-                        )}
-                      </td>
-                      <td className="p-3 text-center">
-                        <button
-                          onClick={() => handleDelete(expense.id)}
-                          className="inline-flex items-center gap-1 px-3 py-1 text-red-600 hover:text-white hover:bg-red-500 rounded-lg font-medium transition-all"
-                        >
-                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                          Delete
-                        </button>
-                      </td>
+                      {editingId === expense.id ? (
+                        // EDIT MODE
+                        <>
+                          <td className="p-3">
+                            <input
+                              type="text"
+                              value={editForm.description}
+                              onChange={(e) =>
+                                setEditForm({ ...editForm, description: e.target.value })
+                              }
+                              className="w-full px-2 py-1 border border-blue-500 rounded focus:ring-2 focus:ring-blue-500 outline-none"
+                              placeholder="Description"
+                            />
+                          </td>
+                          <td className="p-3">
+                            <input
+                              type="text"
+                              value={editForm.category}
+                              onChange={(e) =>
+                                setEditForm({ ...editForm, category: e.target.value })
+                              }
+                              className="w-full px-2 py-1 border border-blue-500 rounded focus:ring-2 focus:ring-blue-500 outline-none text-center"
+                              placeholder="Category"
+                            />
+                          </td>
+                          <td className="p-3">
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={editForm.amount}
+                              onChange={(e) =>
+                                setEditForm({ ...editForm, amount: e.target.value })
+                              }
+                              className="w-full px-2 py-1 border border-blue-500 rounded focus:ring-2 focus:ring-blue-500 outline-none text-center"
+                              placeholder="Amount"
+                            />
+                          </td>
+                          <td className="p-3 text-center text-gray-500">
+                            {new Date(expense.createdAt).toLocaleDateString("en-IN", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                          </td>
+                          <td className="p-3">
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => handleSaveEdit(expense.id)}
+                                className="inline-flex items-center gap-1 px-3 py-1 text-green-600 hover:text-white hover:bg-green-500 rounded-lg font-medium transition-all"
+                              >
+                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
+                                Save
+                              </button>
+                              <button
+                                onClick={handleCancelEdit}
+                                className="inline-flex items-center gap-1 px-3 py-1 text-gray-600 hover:text-white hover:bg-gray-500 rounded-lg font-medium transition-all"
+                              >
+                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                Cancel
+                              </button>
+                            </div>
+                          </td>
+                        </>
+                      ) : (
+                        // VIEW MODE
+                        <>
+                          <td className="p-3 font-medium text-gray-800">
+                            {expense.description}
+                          </td>
+                          <td className="p-3 text-center">
+                            <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                              {expense.category}
+                            </span>
+                          </td>
+                          <td className="p-3 text-center font-semibold text-green-600">
+                            ₹{Number(expense.amount).toLocaleString("en-IN")}
+                          </td>
+                          <td className="p-3 text-center text-gray-500">
+                            {new Date(expense.createdAt).toLocaleDateString("en-IN", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            })}
+                          </td>
+                          <td className="p-3">
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => handleEditClick(expense)}
+                                className="inline-flex items-center gap-1 px-3 py-1 text-blue-600 hover:text-white hover:bg-blue-500 rounded-lg font-medium transition-all"
+                              >
+                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDelete(expense.id)}
+                                className="inline-flex items-center gap-1 px-3 py-1 text-red-600 hover:text-white hover:bg-red-500 rounded-lg font-medium transition-all"
+                              >
+                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        </>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -536,14 +663,13 @@ const ExpenseList = ({ expenses, onRefresh, onDelete }) => {
                 <div className="flex items-center justify-center gap-1">
                   {/* Previous Button */}
                   <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
-                    className={`flex items-center gap-1 px-3 py-2 rounded-lg font-medium transition-all ${currentPage === 1
-                      ? "text-gray-400 cursor-not-allowed"
-                      : "text-gray-700 hover:bg-gray-200"
-                      }`}
+                    className={`flex items-center gap-1 px-3 py-2 rounded-lg font-medium transition-all ${
+                      currentPage === 1
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-gray-700 hover:bg-gray-200"
+                    }`}
                   >
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -560,10 +686,11 @@ const ExpenseList = ({ expenses, onRefresh, onDelete }) => {
                         ) : (
                           <button
                             onClick={() => setCurrentPage(page)}
-                            className={`min-w-[40px] px-3 py-2 rounded-lg font-medium transition-all ${currentPage === page
-                              ? "bg-blue-600 text-white shadow-md"
-                              : "text-gray-700 hover:bg-gray-200"
-                              }`}
+                            className={`min-w-[40px] px-3 py-2 rounded-lg font-medium transition-all ${
+                              currentPage === page
+                                ? "bg-blue-600 text-white shadow-md"
+                                : "text-gray-700 hover:bg-gray-200"
+                            }`}
                           >
                             {page}
                           </button>
@@ -574,14 +701,13 @@ const ExpenseList = ({ expenses, onRefresh, onDelete }) => {
 
                   {/* Next Button */}
                   <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className={`flex items-center gap-1 px-3 py-2 rounded-lg font-medium transition-all ${currentPage === totalPages
-                      ? "text-gray-400 cursor-not-allowed"
-                      : "text-gray-700 hover:bg-gray-200"
-                      }`}
+                    className={`flex items-center gap-1 px-3 py-2 rounded-lg font-medium transition-all ${
+                      currentPage === totalPages
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-gray-700 hover:bg-gray-200"
+                    }`}
                   >
                     <span className="hidden sm:inline">Next</span>
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

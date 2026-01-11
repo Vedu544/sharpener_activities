@@ -9,10 +9,15 @@ import Navbar from "../../components/layout/Navbar";
 
 const Dashboard = () => {
   const { user } = useAuth();
- const { expenses, loading, createExpense, removeExpense } = useExpense();
+ const { expenses, loading, createExpense, removeExpense, modifyExpense } = useExpense();
   const { upgradeToPremium } = usePremium();
 
   const isPremium = user?.isPremium;
+
+   const handleUpdate = async (id, updatedData) => {
+    await modifyExpense(id, updatedData);
+  };
+
 
 
   
@@ -47,6 +52,7 @@ const Dashboard = () => {
           <ExpenseList
             expenses={expenses}
             onDelete={removeExpense}
+            onUpdate={handleUpdate}
           />
         )}
       </div>

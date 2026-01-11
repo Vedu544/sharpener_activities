@@ -20,3 +20,11 @@ export const getExpenses = (page = 1, limit = 10) => {
 export const deleteExpense = (id) => {
   return api.delete(`/expenses/${id}`);
 };
+
+export const updateExpense = (id, expenseData) => {
+  return api.put(`/expenses/${id}`, expenseData);
+};
+
+export const getExpenseById = (id) => {
+  return api.get(`/expenses/${id}`);
+};
