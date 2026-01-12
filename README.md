@@ -1,6 +1,7 @@
-# Expense Tracker
+# Expense Tracker 
 
 A full-stack expense tracking application built with React, Node.js, PostgreSQL, and integrated with premium features like payment gateway and email notifications.
+services used - AWS S3, AWS RDS, AWS EC2 , cashfree payments and Brevo ( for emails)
 
 ## Features
 
