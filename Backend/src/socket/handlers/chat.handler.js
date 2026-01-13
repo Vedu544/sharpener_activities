@@ -1,37 +1,39 @@
-const chatHandler = (io, socket) => {
-  /* ---------- JOIN ROOM ---------- */
-  socket.on("join_room", (roomId) => {
-    socket.join(roomId);
-    console.log(
-      `User ${socket.user.email} joined room ${roomId}`
-    );
-  });
+import Message from "../../models/Message.model.js";
 
-  /* ---------- LEAVE ROOM ---------- */
-  socket.on("leave_room", (roomId) => {
-    socket.leave(roomId);
-    console.log(
-      `User ${socket.user.email} left room ${roomId}`
-    );
-  });
+const socketHandler = (io) => {
+  io.on("connection", (socket) => {
+    console.log("✅ User connected:", socket.user._id.toString());
 
-  /* ---------- SEND MESSAGE ---------- */
-  socket.on("send_message", (data) => {
-    const { roomId, content } = data;
+    socket.on("join-room", (roomId) => {
+      socket.join(roomId);
+      console.log(
+        `👥 User ${socket.user._id} joined room ${roomId}`
+      );
+    });
 
-    const messagePayload = {
-      roomId,
-      sender: {
-        id: socket.user._id,
-        name: socket.user.name,
-        email: socket.user.email,
-      },
-      content,
-      createdAt: new Date(),
-    };
+    socket.on("send-message", async ({ roomId, content }) => {
+      try {
+        const message = await Message.create({
+          senderId: socket.user._id,
+          roomId,
+          content,
+        });
 
-    io.to(roomId).emit("new_message", messagePayload);
+        const populatedMessage = await message.populate(
+          "senderId",
+          "name email"
+        );
+
+        io.to(roomId).emit("receive-message", populatedMessage);
+      } catch (error) {
+        console.error("❌ Message send error:", error.message);
+      }
+    });
+
+    socket.on("disconnect", () => {
+      console.log("🔴 User disconnected:", socket.user._id.toString());
+    });
   });
 };
 
-export default chatHandler;
+export default socketHandler;
