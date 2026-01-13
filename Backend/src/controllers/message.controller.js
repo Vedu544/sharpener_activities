@@ -14,10 +14,14 @@ export const sendMessage = async (req, res, next) => {
       });
     }
 
-    // Check if user is part of the room
     const room = await Room.findById(roomId);
 
-    if (!room || !room.members.includes(senderId)) {
+    if (
+      !room ||
+      !room.members.some(
+        (memberId) => memberId.toString() === senderId.toString()
+      )
+    ) {
       return res.status(403).json({
         success: false,
         message: "You are not a member of this room",
@@ -48,7 +52,12 @@ export const getMessagesByRoom = async (req, res, next) => {
 
     const room = await Room.findById(roomId);
 
-    if (!room || !room.members.includes(userId)) {
+    if (
+      !room ||
+      !room.members.some(
+        (memberId) => memberId.toString() === userId.toString()
+      )
+    ) {
       return res.status(403).json({
         success: false,
         message: "Access denied",
