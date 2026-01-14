@@ -1,13 +1,20 @@
 import express from "express";
 import cors from "cors";
-import authRoutes from "../src/routes/auth.routes.js"
-import roomRoutes from "../src/routes/room.routes.js"
-import messageRoutes from "../src/routes/message.routes.js"
+
+import authRoutes from "./routes/auth.routes.js";
+import roomRoutes from "./routes/room.routes.js";
+import messageRoutes from "./routes/message.routes.js";
 
 const app = express();
 
 /* ---------- MIDDLEWARE ---------- */
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 /* ---------- HEALTH CHECK ---------- */
@@ -18,7 +25,7 @@ app.get("/health", (req, res) => {
   });
 });
 
-/* ---------- ROUTES (will add later) ---------- */
+/* ---------- ROUTES ---------- */
 app.use("/auth", authRoutes);
 app.use("/messages", messageRoutes);
 app.use("/rooms", roomRoutes);
@@ -26,7 +33,6 @@ app.use("/rooms", roomRoutes);
 /* ---------- GLOBAL ERROR HANDLER ---------- */
 app.use((err, req, res, next) => {
   console.error(err.stack);
-
   res.status(err.statusCode || 500).json({
     success: false,
     message: err.message || "Internal Server Error",
