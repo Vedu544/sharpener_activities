@@ -1,4 +1,4 @@
-import * as serviceService from "../services/service.service.js";
+import * as serviceService from "../services/service.service.js"
 import { successResponse, errorResponse } from "../utils/response.js";
 import { validationResult } from "express-validator";
 

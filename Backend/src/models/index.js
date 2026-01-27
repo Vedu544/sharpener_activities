@@ -28,15 +28,21 @@ Payment.belongsTo(Appointment, { foreignKey: "appointmentId" });
 
 // User → Reviews
 User.hasMany(Review, { foreignKey: "userId" });
-Review.belongsTo(User, { foreignKey: "userId" });
+Review.belongsTo(User, { foreignKey: "userId", as: "user" });
 
 // Staff → Reviews
 Staff.hasMany(Review, { foreignKey: "staffId" });
-Review.belongsTo(Staff, { foreignKey: "staffId" });
+Review.belongsTo(Staff, { foreignKey: "staffId", as: "staff" });
 
 // Service → Reviews
 Service.hasMany(Review, { foreignKey: "serviceId" });
-Review.belongsTo(Service, { foreignKey: "serviceId" });
+Review.belongsTo(Service, { foreignKey: "serviceId", as: "service" });
+
+Staff.belongsToMany(Service, { through: "StaffServices" });
+Service.belongsToMany(Staff, { through: "StaffServices" });
+
+
+
 
 export const models = {
   sequelize,

@@ -41,14 +41,14 @@ app.get("/health", (req, res) => {
 });
 
 
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/services", serviceRoutes);
-app.use("/api/staff", staffRoutes);
-app.use("/api/appointments", appointmentRoutes);
-app.use("/api/payments", paymentRoutes);
-app.use("/api/reviews", reviewRoutes);
-app.use("/api/admin", adminRoutes);
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+app.use("/services", serviceRoutes);
+app.use("/staff", staffRoutes);
+app.use("/appointments", appointmentRoutes);
+app.use("/payments", paymentRoutes);
+app.use("/reviews", reviewRoutes);
+app.use("/admin", adminRoutes);
 
 
 export default app;

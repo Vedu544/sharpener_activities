@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import env from "../config/env.js";
-import { User } from "../models/index.js";
+import { models as db } from "../models/index.js"
 
 export const authMiddleware = async (req, res, next) => {
   try {
@@ -17,7 +17,7 @@ export const authMiddleware = async (req, res, next) => {
 
     const decoded = jwt.verify(token, env.jwt.secret);
 
-    const user = await User.findByPk(decoded.id, {
+    const user = await db.User.findByPk(decoded.id, {
       attributes: { exclude: ["password"] },
     });
 

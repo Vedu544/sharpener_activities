@@ -1,29 +1,43 @@
 import { body } from "express-validator";
 
-export const createAppointmentValidator = [
+/**
+ * Book Appointment Validator
+ */
+export const bookAppointmentValidator = [
   body("serviceId")
     .notEmpty()
-    .withMessage("Service ID is required"),
+    .withMessage("Service ID is required")
+    .isUUID()
+    .withMessage("Service ID must be a valid UUID"),
 
   body("staffId")
     .notEmpty()
-    .withMessage("Staff ID is required"),
+    .withMessage("Staff ID is required")
+    .isUUID()
+    .withMessage("Staff ID must be a valid UUID"),
 
   body("appointmentDate")
-    .isDate()
-    .withMessage("Valid appointment date is required"),
+    .notEmpty()
+    .withMessage("Appointment date is required")
+    .isISO8601()
+    .withMessage("Appointment date must be a valid date"),
 
   body("appointmentTime")
     .notEmpty()
     .withMessage("Appointment time is required"),
 ];
 
+/**
+ * Reschedule Appointment Validator
+ */
 export const rescheduleAppointmentValidator = [
   body("appointmentDate")
-    .isDate()
-    .withMessage("Valid appointment date is required"),
+    .notEmpty()
+    .withMessage("New appointment date is required")
+    .isISO8601()
+    .withMessage("Appointment date must be a valid date"),
 
   body("appointmentTime")
     .notEmpty()
-    .withMessage("Appointment time is required"),
+    .withMessage("New appointment time is required"),
 ];

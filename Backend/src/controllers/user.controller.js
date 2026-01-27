@@ -1,6 +1,6 @@
-import db from "../models/index.js";
+import { models as db } from "../models/index.js";
 import { successResponse, errorResponse } from "../utils/response.js";
-import * as userService from "../services/user.service.js";
+import * as userService from "../services/user.service.js"
 
 // Get current logged-in user profile
 export const getProfile = async (req, res) => {

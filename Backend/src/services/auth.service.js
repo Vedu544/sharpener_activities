@@ -1,4 +1,5 @@
-import db from "../models/index.js";
+import { models as db } from "../models/index.js";
+
 import { hashPassword, comparePassword } from "../utils/password.js";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
 
