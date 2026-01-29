@@ -1,0 +1,32 @@
+<!-- Hero Section -->
+<section
+  class="min-h-[80vh] flex flex-col items-center justify-center text-center bg-gradient-to-r from-black to-gray-900 text-white px-6">
+  <h1 class="text-4xl md:text-5xl font-bold mb-4">
+    Welcome to Salon Booking
+  </h1>
+
+  <p class="text-lg md:text-xl text-gray-300 mb-6 max-w-xl">
+    Book your beauty services anytime, anywhere
+  </p>
+
+  <a routerLink="/auth/login"
+    class="inline-block bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">
+    Get Started
+  </a>
+</section>
+
+<!-- Services Section -->
+<section class="py-16 px-6 bg-gray-50">
+  <h2 class="text-3xl font-bold text-center mb-10">
+    <p class="text-red-500">Services count: {{ services.length }}</p>
+    Our Services
+  </h2>
+
+  <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 max-w-7xl mx-auto">
+    <div *ngFor="let service of services">
+      <app-service-card [service]="service"></app-service-card>
+    </div>
+
+
+  </div>
+</section>

@@ -1,0 +1,14 @@
+.hero {
+  text-align: center;
+  padding: 60px;
+}
+
+.services {
+  padding: 40px;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}

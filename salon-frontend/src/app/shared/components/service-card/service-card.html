@@ -1,0 +1,12 @@
+<div *ngIf="loading">Loading services...</div>
+
+<div *ngIf="error" class="text-red-500">
+  {{ error }}
+</div>
+
+<div *ngFor="let service of services" class="p-4 border rounded mb-3">
+  <h3 class="font-bold">{{ service.name }}</h3>
+  <p>{{ service.description }}</p>
+  <p>Duration: {{ service.duration }} mins</p>
+  <p>₹{{ service.price }}</p>
+</div>
