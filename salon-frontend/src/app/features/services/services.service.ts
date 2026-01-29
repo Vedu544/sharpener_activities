@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -9,8 +9,6 @@ export interface Service {
   duration: number;
   price: string;
   isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface ServicesResponse {
@@ -18,15 +16,15 @@ export interface ServicesResponse {
   message: string;
   data: Service[];
 }
+
 @Injectable({
   providedIn: 'root',
 })
 export class ServicesService {
-  private readonly API_URL = 'http://localhost:8000';
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private readonly API_URL = 'http://localhost:8000/services';
 
   getServices(): Observable<ServicesResponse> {
-    return this.http.get<ServicesResponse>(`${this.API_URL}/services`);
+    return this.http.get<ServicesResponse>(this.API_URL);
   }
 }

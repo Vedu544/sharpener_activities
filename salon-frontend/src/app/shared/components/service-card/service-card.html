@@ -1,12 +1,22 @@
-<div *ngIf="loading">Loading services...</div>
+<div class="bg-white rounded-xl shadow p-4">
+  <h3 class="text-lg font-semibold">{{ service.name }}</h3>
+  <p class="text-sm text-gray-600">{{ service.description }}</p>
 
-<div *ngIf="error" class="text-red-500">
-  {{ error }}
+  <div class="mt-4 flex justify-between items-center">
+    <span class="font-bold">₹{{ service.price }}</span>
+
+    <button
+      class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
+      (click)="openBooking()"
+    >
+      Book Appointment
+    </button>
+  </div>
 </div>
 
-<div *ngFor="let service of services" class="p-4 border rounded mb-3">
-  <h3 class="font-bold">{{ service.name }}</h3>
-  <p>{{ service.description }}</p>
-  <p>Duration: {{ service.duration }} mins</p>
-  <p>₹{{ service.price }}</p>
-</div>
+<!-- Dialog -->
+<app-book-appointment
+  *ngIf="showDialog()"
+  [service]="service"
+  (close)="closeBooking()"
+></app-book-appointment>

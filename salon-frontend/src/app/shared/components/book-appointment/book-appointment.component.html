@@ -1,0 +1,48 @@
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl w-full max-w-md p-6 relative">
+    <h2 class="text-xl font-bold mb-4">Book Appointment</h2>
+
+    <!-- Service -->
+    <div class="mb-3">
+      <label class="text-sm font-medium">Service</label>
+      <input class="w-full border rounded px-3 py-2 bg-gray-100" [value]="service.name" disabled />
+    </div>
+
+    <!-- Date -->
+    <div class="mb-3">
+      <label class="text-sm font-medium">Date</label>
+      <input type="date" class="w-full border rounded px-3 py-2" [(ngModel)]="appointmentDate" />
+    </div>
+
+    <!-- Time -->
+    <div class="mb-3">
+      <label class="text-sm font-medium">Time</label>
+      <input type="time" class="w-full border rounded px-3 py-2" [(ngModel)]="appointmentTime" />
+    </div>
+
+    <!-- Staff (disabled for now) -->
+    <div class="mb-4">
+      <label class="text-sm font-medium">Staff</label>
+
+      <select class="w-full border rounded px-3 py-2" [(ngModel)]="selectedStaffId">
+        <option value="">Select staff</option>
+
+        <option *ngFor="let staff of filteredStaff" [value]="staff.id">
+          {{ staff.name }}
+        </option>
+      </select>
+    </div>
+
+
+    <!-- Actions -->
+    <div class="flex justify-end gap-3">
+      <button class="px-4 py-2 border rounded" (click)="close.emit()">
+        Cancel
+      </button>
+
+      <button class="px-4 py-2 bg-black text-white rounded opacity-50 cursor-not-allowed">
+        Book
+      </button>
+    </div>
+  </div>
+</div>

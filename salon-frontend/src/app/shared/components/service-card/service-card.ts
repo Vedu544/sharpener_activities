@@ -1,38 +1,24 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Service, ServicesService } from '../../../features/services/services.service';
+import { Component, Input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Service } from '../../../features/services/services.service';
+import { BookAppointmentComponent } from '../book-appointment/book-appointment.component';
 
 @Component({
-  imports: [CommonModule],
-  standalone: true,
   selector: 'app-service-card',
-  templateUrl: './service-card.html'
+  standalone: true,
+  imports: [CommonModule, BookAppointmentComponent],
+  templateUrl: './service-card.html',
 })
-export class ServiceCardComponent implements OnInit {
- @Input() service!: Service;
-  services: any[] = [];
-  loading = false;
-  error = '';
+export class ServiceCardComponent {
+  @Input() service!: Service;
 
-  constructor(private servicesApi: ServicesService) {}
+  showDialog = signal(false);
 
-  ngOnInit() {
-    this.fetchServices();
+  openBooking() {
+    this.showDialog.set(true);
   }
 
-  fetchServices() {
-    this.loading = true;
-
-    this.servicesApi.getServices().subscribe({
-      next: (res) => {
-        this.services = res.data;
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = 'Failed to load services';
-        this.loading = false;
-        console.error(err);
-      }
-    });
+  closeBooking() {
+    this.showDialog.set(false);
   }
 }
