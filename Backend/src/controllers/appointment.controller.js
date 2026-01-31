@@ -9,6 +9,7 @@ export const bookAppointment = async (req, res) => {
 
   try {
     const appointment = await appointmentService.bookAppointment(req.user.id, req.body);
+    
     return successResponse(res, "Appointment booked", appointment, 201);
   } catch (err) {
     return errorResponse(res, err.message, 400);

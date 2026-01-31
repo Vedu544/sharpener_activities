@@ -9,6 +9,11 @@ const Appointment = sequelize.define(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
+    serviceName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "Unknown Service", // ← Add default
+    },
     appointmentDate: {
       type: DataTypes.DATEONLY,
       allowNull: false,

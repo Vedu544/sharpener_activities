@@ -2,20 +2,19 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ServicesService, Service } from '../../../services/services.service';
 import { ServiceCardComponent } from '../../../../shared/components/service-card/service-card';
-import { ChangeDetectionStrategy,  } from '@angular/core';
-
+import { ReviewFormComponent } from './review-form.component';
+import { ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ServiceCardComponent],
+  imports: [CommonModule, ServiceCardComponent, ReviewFormComponent],
   templateUrl: './home.html',
-  changeDetection: ChangeDetectionStrategy.OnPush, // ← Keep this
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
   private servicesService = inject(ServicesService);
-  private cdr = inject(ChangeDetectorRef); // ← Add this
-
+  private cdr = inject(ChangeDetectorRef);
   services: Service[] = [];
   loading = false;
 
@@ -31,12 +30,12 @@ export class HomeComponent implements OnInit {
         console.log('Services:', this.services);
         console.log('Services length:', this.services.length);
         this.loading = false;
-        this.cdr.markForCheck(); // ← Add this line
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error(err);
         this.loading = false;
-        this.cdr.markForCheck(); // ← Add this too
+        this.cdr.markForCheck();
       },
     });
   }

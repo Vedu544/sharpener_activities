@@ -2,56 +2,51 @@ import Payment from "../models/Payment.js";
 import axios from "axios";
 import config from "../config/env.js";
 
-/**
- * Create Cashfree payment order
- */
-export const createPaymentOrder = async ({ amount, orderId, customerPhone, customerEmail }) => {
-  const url =
-    config.CASHFREE_ENV === "sandbox"
-      ? "https://test.cashfree.com/api/v2/cftoken/order"
-      : "https://api.cashfree.com/api/v2/cftoken/order";
+export const createPayment = async ({
+  appointmentId,
+  amount,
+  method,
+  customerEmail = "test@test.com",
+  customerPhone = "9999999999",
+}) => {
 
-  const payload = {
-    orderId,
-    orderAmount: amount,
-    orderCurrency: "INR",
-    customerName: "Customer",
-    customerPhone,
-    customerEmail,
-  };
 
-  try {
-    const response = await axios.post(url, payload, {
+  const response = await axios.post(
+    "https://sandbox.cashfree.com/pg/orders",
+    {
+      order_id: `order_${Date.now()}`,
+      order_amount: Number(amount),
+      order_currency: "INR",
+      customer_details: {
+        customer_id: appointmentId,
+        customer_email: customerEmail,
+        customer_phone: customerPhone,
+      },
+    },
+    {
       headers: {
-        "x-client-id": config.CASHFREE_APP_ID,
-        "x-client-secret": config.CASHFREE_SECRET_KEY,
+        "x-client-id": config.cashfree.appId,
+        "x-client-secret": config.cashfree.secretKey,
+        "x-api-version": "2023-08-01",
         "Content-Type": "application/json",
       },
-    });
-    return response.data;
-  } catch (err) {
-    throw new Error("Payment order creation failed: " + err.message);
-  }
-};
+    }
+  );
 
-/**
- * Create payment record in DB
- */
-export const createPayment = async (data) => {
-  const payment = await Payment.create(data);
-  return payment;
-};
+  const { payment_session_id, order_id } = response.data;
 
-/**
- * Verify payment
- */
-export const verifyPayment = async ({ paymentId }) => {
-  const payment = await Payment.findByPk(paymentId);
-  if (!payment) throw new Error("Payment not found");
+  const payment = await Payment.create({
+    appointmentId,
+    amount,
+    method,
+    orderId: order_id,
+    paymentSessionId: payment_session_id,
+    status: "PENDING",
+  });
 
-  // Example: mark as verified
-  payment.status = "SUCCESS";
-  await payment.save();
-
-  return payment;
+  return {
+    paymentId: payment.id,
+    orderId: order_id,
+    paymentSessionId: payment_session_id,
+  };
 };

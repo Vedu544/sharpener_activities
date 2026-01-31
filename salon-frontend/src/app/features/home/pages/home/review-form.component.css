@@ -1,0 +1,52 @@
+/* Review Form Styling */
+:host {
+  display: block;
+}
+
+/* Smooth transitions */
+select,
+textarea {
+  transition: all 0.3s ease;
+}
+
+select:hover,
+textarea:hover {
+  border-color: #f87171;
+}
+
+/* Star rating hover effect */
+button[type="button"] {
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+button[type="button"]:hover {
+  transform: scale(1.2);
+}
+
+/* Submit button animation */
+button[type="submit"]:not(:disabled) {
+  position: relative;
+  overflow: hidden;
+}
+
+button[type="submit"]:not(:disabled):hover {
+  box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Message animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mt-4 {
+  animation: slideIn 0.3s ease;
+}

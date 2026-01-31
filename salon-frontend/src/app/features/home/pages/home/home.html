@@ -4,11 +4,9 @@
   <h1 class="text-4xl md:text-5xl font-bold mb-4">
     Welcome to Salon Booking
   </h1>
-
   <p class="text-lg md:text-xl text-gray-300 mb-6 max-w-xl">
     Book your beauty services anytime, anywhere
   </p>
-
   <a routerLink="/auth/login"
     class="inline-block bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">
     Get Started
@@ -21,12 +19,12 @@
     <p class="text-red-500">Services count: {{ services.length }}</p>
     Our Services
   </h2>
-
   <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 max-w-7xl mx-auto">
     <div *ngFor="let service of services">
       <app-service-card [service]="service"></app-service-card>
     </div>
-
-
   </div>
 </section>
+
+<!-- Review Section -->
+<app-review-form></app-review-form>

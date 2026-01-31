@@ -40,9 +40,12 @@
         Cancel
       </button>
 
-      <button class="px-4 py-2 bg-black text-white rounded opacity-50 cursor-not-allowed">
-        Book
+      <button class="px-4 py-2 bg-black text-white rounded" [disabled]="!isFormValid()"
+        [class.opacity-50]="!isFormValid()" (click)="book()">
+        Book & Pay
       </button>
+
     </div>
+
   </div>
 </div>

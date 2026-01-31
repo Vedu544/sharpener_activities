@@ -4,11 +4,16 @@ import { body } from "express-validator";
  * Book Appointment Validator
  */
 export const bookAppointmentValidator = [
+
   body("serviceId")
     .notEmpty()
     .withMessage("Service ID is required")
     .isUUID()
     .withMessage("Service ID must be a valid UUID"),
+
+  body("serviceName")
+    .notEmpty()
+    .withMessage("Service name is required"),
 
   body("staffId")
     .notEmpty()

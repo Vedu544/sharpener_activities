@@ -1,16 +1,15 @@
 import Appointment from "../models/Appointment.js";
-import Staff from "../models/Staff.js";
-import Service from "../models/Service.js";
 
 /**
  * Book an appointment
  */
 export const bookAppointment = async (userId, data) => {
-  const { serviceId, staffId, appointmentDate, appointmentTime } = data;
+  const { serviceId, staffId, appointmentDate, appointmentTime, serviceName } = data;
 
   // You can add checks here if staff/service exists or available
   const appointment = await Appointment.create({
     userId,
+    serviceName,
     serviceId,
     staffId,
     appointmentDate,
@@ -24,6 +23,7 @@ export const bookAppointment = async (userId, data) => {
  * Reschedule appointment
  */
 export const rescheduleAppointment = async (appointmentId, data) => {
+  console.log(data, "data");
   const appointment = await Appointment.findByPk(appointmentId);
   if (!appointment) throw new Error("Appointment not found");
 
