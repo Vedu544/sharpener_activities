@@ -37,7 +37,7 @@ export class ReviewService {
   private readonly API_URL = 'http://localhost:8000';
 
   getStaff(): Observable<StaffResponse> {
-    return this.http.get<StaffResponse>(`${this.API_URL}/get-staff`);
+    return this.http.get<StaffResponse>(`${this.API_URL}/staff`);
   }
 
   addReview(payload: ReviewPayload): Observable<ReviewResponse> {

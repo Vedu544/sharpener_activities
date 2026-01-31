@@ -16,8 +16,4 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/appointments/pages/your-appointments/your-appointments.component').then(m => m.YourAppointmentsComponent),
   },
-  {
-    path: '**',
-    redirectTo: '',
-  },
 ];

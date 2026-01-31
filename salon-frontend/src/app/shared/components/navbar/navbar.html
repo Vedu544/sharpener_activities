@@ -1,9 +1,44 @@
-<nav class="bg-black text-white px-6 py-4 flex justify-between items-center">
-  <h1 class="text-xl font-bold">Salon Booking</h1>
+<nav class="navbar sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+  <!-- Left: Brand Name -->
+  <h1 class="navbar-brand">Glamour Salon</h1>
 
-  <div class="space-x-4">
-    <a class="hover:text-gray-300 cursor-pointer" routerLink="/">Home</a>
-    <a class="hover:text-gray-300 cursor-pointer" routerLink="/your-appointments">Your Appointments</a>
-    <a class="hover:text-gray-300 cursor-pointer" routerLink="/auth/login">Login</a>
+  <!-- Right: Navigation & Auth Buttons -->
+  <div class="flex items-center space-x-6">
+    <!-- Navigation Links (Hidden on mobile) -->
+   
+
+    <!-- Auth Buttons -->
+    <div class="flex items-center space-x-3">
+      <!-- Your Appointments Button (Show if logged in) -->
+      <button 
+        *ngIf="isLoggedIn"
+        (click)="goToAppointments()"
+        class="btn-primary text-sm">
+        Your Appointments
+      </button>
+
+      <!-- Login Button (Show if NOT logged in) -->
+      <button 
+        *ngIf="!isLoggedIn"
+        (click)="goToLogin()"
+        class="btn-secondary text-sm">
+        Login
+      </button>
+
+      <!-- Logout Button (Show if logged in) -->
+      <button 
+        *ngIf="isLoggedIn"
+        (click)="logout()"
+        class="btn-secondary text-sm">
+        Logout
+      </button>
+    </div>
+
+    <!-- Mobile Menu Toggle (Optional) -->
+    <button class="md:hidden text-gray-700 hover:text-purple-600">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
   </div>
 </nav>

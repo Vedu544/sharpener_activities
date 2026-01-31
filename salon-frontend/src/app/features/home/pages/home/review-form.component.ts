@@ -10,7 +10,7 @@ import { ChangeDetectionStrategy } from '@angular/core';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <section class="py-20 px-6 bg-white">
+    <section class="mb-3">
       <div class="max-w-2xl mx-auto">
         <!-- Header -->
         <div class="mb-12 text-center">
@@ -22,7 +22,7 @@ import { ChangeDetectionStrategy } from '@angular/core';
 
         <!-- Review Card -->
         <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8 shadow-lg border border-gray-200">
-          <form (ngSubmit)="submitReview()" [formGroup]="!loading">
+          <form (ngSubmit)="submitReview()">
             <!-- Service Dropdown -->
             <div class="mb-6">
               <label class="block text-sm font-semibold text-gray-700 mb-3">

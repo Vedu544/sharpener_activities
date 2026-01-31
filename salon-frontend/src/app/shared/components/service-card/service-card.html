@@ -1,20 +1,37 @@
-<div class="bg-white rounded-xl shadow p-4">
-  <h3 class="text-lg font-semibold">{{ service.name }}</h3>
-  <p class="text-sm text-gray-600">{{ service.description }}</p>
+<div class="group bg-white rounded-xl shadow overflow-hidden transition hover:shadow-xl">
 
-  <div class="mt-4 flex justify-between items-center">
-    <span class="font-bold">₹{{ service.price }}</span>
+  <!-- Image -->
+  <div class="relative overflow-hidden">
+    <img
+      *ngIf="index < 4"
+      [src]="serviceImages[index]"
+      [alt]="service.name"
+      class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+    />
+  </div>
 
-    <button
-      class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
-      (click)="openBooking()"
-    >
-      Book Appointment
-    </button>
+  <div class="p-4">
+    <h3 class="text-lg font-semibold group-hover:text-orange-600 transition">
+      {{ service.name }}
+    </h3>
+
+    <p class="text-sm text-gray-600">
+      {{ service.description }}
+    </p>
+
+    <div class="mt-4 flex justify-between items-center">
+      <span class="font-bold text-lg">₹{{ service.price }}</span>
+
+      <button
+        class="bg-black text-white px-4 py-2 rounded-lg transition hover:bg-orange-600"
+        (click)="openBooking()"
+      >
+        Book Appointment
+      </button>
+    </div>
   </div>
 </div>
 
-<!-- Dialog -->
 <app-book-appointment
   *ngIf="showDialog()"
   [service]="service"

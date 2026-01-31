@@ -9,8 +9,19 @@ import { BookAppointmentComponent } from '../book-appointment/book-appointment.c
   imports: [CommonModule, BookAppointmentComponent],
   templateUrl: './service-card.html',
 })
+
+
 export class ServiceCardComponent {
+
+  serviceImages: string[] = [
+    '/assets/haircut.jpg',
+    '/assets/spa.jpg',
+    '/assets/makeup.jpg',
+    '/assets/massage.jpg'
+  ];
+
   @Input() service!: Service;
+  @Input() index!: number;
 
   showDialog = signal(false);
 
@@ -22,3 +33,4 @@ export class ServiceCardComponent {
     this.showDialog.set(false);
   }
 }
+

@@ -1,30 +1,63 @@
 <!-- Hero Section -->
-<section
-  class="min-h-[80vh] flex flex-col items-center justify-center text-center bg-gradient-to-r from-black to-gray-900 text-white px-6">
-  <h1 class="text-4xl md:text-5xl font-bold mb-4">
-    Welcome to Salon Booking
-  </h1>
-  <p class="text-lg md:text-xl text-gray-300 mb-6 max-w-xl">
-    Book your beauty services anytime, anywhere
-  </p>
-  <a routerLink="/auth/login"
-    class="inline-block bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">
-    Get Started
-  </a>
+<section class="hero-bg min-h-screen flex flex-col items-center justify-center text-center px-6 py-20 relative">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="fade-in-up text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6">
+      Self Glamour Salon
+    </h1>
+    <p class="fade-in-up delay-1 text-xl md:text-2xl text-gray-700 mb-8 max-w-2xl mx-auto leading-relaxed">
+      Book expert hair, beauty & grooming services at Self Glamour Salon. Trusted stylists, premium products, and flawless results on every visit.
+    
+    <div class="fade-in-up delay-2 flex flex-col sm:flex-row gap-4 justify-center mb-12">
+      <a routerLink="/auth/login" class="btn-primary text-lg">Get Started</a>
+    </div>
+
+    <div class="fade-in-up delay-3 bg-white bg-opacity-60 backdrop-blur-md rounded-full py-4 px-8 inline-block border border-white border-opacity-50">
+      <p class="text-gray-800 font-semibold">
+        <span class="stat-number">5,01,589</span>
+        <span class="text-gray-600"> appointments booked today</span>
+      </p>
+    </div>
+  </div>
 </section>
 
 <!-- Services Section -->
-<section class="py-16 px-6 bg-gray-50">
-  <h2 class="text-3xl font-bold text-center mb-10">
-    <p class="text-red-500">Services count: {{ services.length }}</p>
-    Our Services
-  </h2>
-  <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 max-w-7xl mx-auto">
-    <div *ngFor="let service of services">
-      <app-service-card [service]="service"></app-service-card>
+<section id="services" class="py-20 px-6 bg-white">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16">
+      <h2 class="section-title">Our Premium Services</h2>
+      <p class="section-subtitle">Choose from a wide variety of beauty and wellness treatments</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex items-center justify-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+    </div>
+
+    <!-- Services Grid -->
+    <div *ngIf="!loading && services.length > 0" class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 max-w-7xl mx-auto">
+      <div *ngFor="let service of services; let i = index" class="scale-in">
+        <app-service-card [service]="service" [index]="i"></app-service-card>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && services.length === 0" class="text-center py-12">
+      <p class="text-gray-500 text-lg">No services available at the moment</p>
     </div>
   </div>
 </section>
 
 <!-- Review Section -->
-<app-review-form></app-review-form>
+<section id="reviews" class=" bg-gray-50">
+  <div class="max-w-7xl mx-auto">
+    <app-review-form></app-review-form>
+  </div>
+</section>
+
+<!-- Tagline Section -->
+<section class="tagline-section text-center text-white">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="tagline-title">The top-rated destination for selfcare</h2>
+    <p class="tagline-subtitle">Where beauty meets confidence. Enjoy personalized hair and beauty services by skilled salon professionals you can trust.</p>
+  </div>
+</section>
