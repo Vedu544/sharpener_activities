@@ -1,1 +1,95 @@
-<p>signup works!</p>
+<div class="min-h-screen flex items-center justify-center mt-[-30px]">
+  <div class="w-250 max-w-md bg-white rounded-xl shadow-lg p-4">
+    <h2 class="text-3xl font-bold text-center mb-2 text-gray-900">Create Account</h2>
+    <p class="text-center text-gray-600 text-sm mb-8">Join us today and get started in minutes</p>
+    
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
+      <!-- Row 1: Full Name & Email -->
+      <div class="grid grid-cols-2 gap-7">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+          <input
+            type="text"
+            formControlName="name"
+            placeholder="John Doe"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition"
+          />
+          <span *ngIf="registerForm.get('name')?.hasError('required') && registerForm.get('name')?.touched" class="text-red-500 text-xs mt-1 block">
+            Required
+          </span>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="you@example.com"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition"
+          />
+          <span *ngIf="registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched" class="text-red-500 text-xs mt-1 block">
+            Required
+          </span>
+          <span *ngIf="registerForm.get('email')?.hasError('email') && registerForm.get('email')?.touched" class="text-red-500 text-xs mt-1 block">
+            Invalid
+          </span>
+        </div>
+      </div>
+
+      <!-- Row 2: Phone & Password -->
+      <div class="grid grid-cols-2 gap-7">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+          <input
+            type="tel"
+            formControlName="phone"
+            placeholder="+1 (555) 000"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition"
+          />
+          <span *ngIf="registerForm.get('phone')?.hasError('required') && registerForm.get('phone')?.touched" class="text-red-500 text-xs mt-1 block">
+            Required
+          </span>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+          <input
+            type="password"
+            formControlName="password"
+            placeholder="••••••••"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition"
+          />
+          <span *ngIf="registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched" class="text-red-500 text-xs mt-1 block">
+            Required
+          </span>
+        </div>
+      </div>
+
+      <p *ngIf="errorMessage" class="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3">
+        {{ errorMessage }}
+      </p>
+      
+      <button
+        type="submit"
+        [disabled]="loading || registerForm.invalid"
+        class="w-full bg-black text-white font-medium py-2.5 rounded-lg hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+      >
+        {{ loading ? 'Creating Account...' : 'Create Account' }}
+      </button>
+    </form>
+
+    <!-- Login Section -->
+    <div class="mt-4 pt-4 border-gray-200">
+      <p class="text-center text-gray-600 text-sm mb-4">
+        Already have an account?
+      </p>
+      <p class="text-center text-gray-600 text-sm mb-4">
+        Sign in to your existing account and access your dashboard
+      </p>
+      <button
+        (click)="navigateToLogin()"
+        class="w-full border-2 border-black text-black font-medium py-2.5 rounded-lg hover:bg-purple-400 hover:text-white transition duration-200"
+      >
+        Sign In
+      </button>
+    </div>
+  </div>
+</div>

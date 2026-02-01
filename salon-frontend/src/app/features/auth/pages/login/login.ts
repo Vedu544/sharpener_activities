@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { Auth } from '../../../../core/auth/auth';
 import { TokenService } from '../../../../core/auth/token';
 
-
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -30,6 +29,7 @@ export class Login {
     if (this.loginForm.invalid) return;
 
     this.loading = true;
+    this.errorMessage = '';
 
     this.auth.login(this.loginForm.getRawValue()).subscribe({
       next: (res) => {
@@ -37,9 +37,13 @@ export class Login {
         this.router.navigate(['/']);
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Login failed';
+        this.errorMessage = err.error?.message || 'Login failed. Please try again.';
         this.loading = false;
       },
     });
+  }
+
+  navigateToSignup() {
+    this.router.navigate(['/auth/signup']);
   }
 }
