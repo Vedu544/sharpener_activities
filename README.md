@@ -1,5 +1,10 @@
 # Expense Tracker 
 
+
+## Live Demo
+
+Frontend: http://01-expense-tracker.s3-website.ap-south-1.amazonaws.com/login
+
 A full-stack expense tracking application built with React, Node.js, PostgreSQL, and integrated with premium features like payment gateway and email notifications.
 services used - AWS S3, AWS RDS, AWS EC2 , cashfree payments and Brevo ( for emails)
 
@@ -541,10 +546,6 @@ CASHFREE_ENV=production
 4. Complete any additional compliance requirements
 
 ---
-
-## Live Demo
-
-Frontend: http://01-expense-tracker.s3-website.ap-south-1.amazonaws.com/login
 
 
 ## Security Best Practices
